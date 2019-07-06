@@ -1,27 +1,45 @@
-package com.udacity.popular_movies_2.data;
+package com.udacity.popular_movies_2.database;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
+@Entity(tableName = "movie")
 public class Movie implements Parcelable {
+
+    @Ignore
     private static final String baseUrl = "http://image.tmdb.org/t/p/w500";
-    private static final SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat("d MMMM yyyy");
-    String title;
-    String releaseDate;
-    String moviePoster; // url
-    double voteAverage;
-    String plotSypnosis;
+
+    @PrimaryKey
+    private int id;
+    private String title;
+    @ColumnInfo(name = "release_date")
+    private Date releaseDate;
+    @ColumnInfo(name = "movie_poster")
+    private String moviePoster; // url
+    @ColumnInfo(name = "vote_average")
+    private double voteAverage;
+    @ColumnInfo(name = "plot_synopsis")
+    private String plotSynopsis;
+
+    public int getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
     }
 
-    public String getReleaseDate() throws ParseException {
-        return outputDateFormat.format(inputDateFormat.parse(releaseDate));
+    public Date getReleaseDate() {
+        return releaseDate;
     }
 
     public String getMoviePoster() {
@@ -32,24 +50,25 @@ public class Movie implements Parcelable {
         return voteAverage;
     }
 
-    public String getPlotSypnosis() {
-        return plotSypnosis;
+    public String getPlotSynopsis() {
+        return plotSynopsis;
     }
 
-    public Movie(String title, String releaseDate, String moviePoster, double voteAverage, String plotSypnosis) {
+    public Movie(int id, String title, Date releaseDate, String moviePoster, double voteAverage, String plotSynopsis) {
+        this.id = id;
         this.title = title;
         this.releaseDate = releaseDate;
         this.moviePoster = baseUrl + moviePoster;
         this.voteAverage = voteAverage;
-        this.plotSypnosis = plotSypnosis;
+        this.plotSynopsis = plotSynopsis;
     }
 
     private Movie(Parcel in) {
         title = in.readString();
-        releaseDate = in.readString();
+        releaseDate = new Date(in.readLong());
         moviePoster = in.readString();
         voteAverage = in.readDouble();
-        plotSypnosis = in.readString();
+        plotSynopsis = in.readString();
     }
 
     @Override
@@ -60,10 +79,10 @@ public class Movie implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
-        dest.writeString(releaseDate);
+        dest.writeLong(releaseDate.getTime());
         dest.writeString(moviePoster);
         dest.writeDouble(voteAverage);
-        dest.writeString(plotSypnosis);
+        dest.writeString(plotSynopsis);
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {

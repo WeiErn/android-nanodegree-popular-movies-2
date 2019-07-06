@@ -21,7 +21,8 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.udacity.popular_movies_2.data.Movie;
+import com.udacity.popular_movies_2.database.AppDatabase;
+import com.udacity.popular_movies_2.database.Movie;
 import com.udacity.popular_movies_2.data.MovieAdapter;
 import com.udacity.popular_movies_2.utils.JsonUtils;
 import com.udacity.popular_movies_2.utils.NetworkUtils;
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar mLoadingIndicator;
     private static final int MOVIE_LOADER_ID = 0;
     private List<Movie> mMovies;
+
+    private AppDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

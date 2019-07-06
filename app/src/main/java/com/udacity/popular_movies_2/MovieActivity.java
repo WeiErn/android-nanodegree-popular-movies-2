@@ -8,16 +8,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
-import com.udacity.popular_movies_2.data.Movie;
+import com.udacity.popular_movies_2.database.Movie;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class MovieActivity extends AppCompatActivity {
     private ImageView mMoviePosterImageView;
     private TextView mMovieTitleTextView;
     private TextView mMovieReleaseDateTextView;
     private TextView mMovieVoteAverageTextView;
-    private TextView mMoviePlotSypnosisTextView;
+    private TextView mMoviePlotSynopsisTextView;
+    private static final SimpleDateFormat outputDateFormat = new SimpleDateFormat("d MMMM yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +30,7 @@ public class MovieActivity extends AppCompatActivity {
         mMovieTitleTextView = findViewById(R.id.movie_detail_title);
         mMovieReleaseDateTextView = findViewById(R.id.movie_detail_release_date);
         mMovieVoteAverageTextView = findViewById(R.id.movie_detail_vote_average);
-        mMoviePlotSypnosisTextView = findViewById(R.id.movie_detail_plot_sypnosis);
+        mMoviePlotSynopsisTextView = findViewById(R.id.movie_detail_plot_synopsis);
 
         Intent intent = getIntent();
 
@@ -37,13 +39,9 @@ public class MovieActivity extends AppCompatActivity {
             Picasso.get().load(movie.getMoviePoster()).into(mMoviePosterImageView);
             getSupportActionBar().setTitle(movie.getTitle());
             mMovieTitleTextView.setText(movie.getTitle());
-            try {
-                mMovieReleaseDateTextView.setText(movie.getReleaseDate());
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            mMovieReleaseDateTextView.setText(outputDateFormat.format(movie.getReleaseDate()));
             mMovieVoteAverageTextView.setText(movie.getVoteAverage() + "/10");
-            mMoviePlotSypnosisTextView.setText(movie.getPlotSypnosis());
+            mMoviePlotSynopsisTextView.setText(movie.getPlotSynopsis());
         }
     }
 }
