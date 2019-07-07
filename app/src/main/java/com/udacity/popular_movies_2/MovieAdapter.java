@@ -1,4 +1,4 @@
-package com.udacity.popular_movies_2.data;
+package com.udacity.popular_movies_2;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
-import com.udacity.popular_movies_2.R;
 import com.udacity.popular_movies_2.database.Movie;
 
 import java.util.List;

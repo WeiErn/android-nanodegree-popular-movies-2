@@ -16,7 +16,7 @@ public interface MovieDao {
     @Query("SELECT * FROM movie")
     LiveData<List<Movie>> loadAllMovies();
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMovie(Movie movie);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
@@ -26,5 +26,5 @@ public interface MovieDao {
     void deleteMovie(Movie movie);
 
     @Query("SELECT * FROM movie WHERE id = :id")
-    LiveData<Movie> loadTaskById(int id);
+    LiveData<Movie> loadMovieById(int id);
 }

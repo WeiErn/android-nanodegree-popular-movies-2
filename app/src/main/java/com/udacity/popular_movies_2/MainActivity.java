@@ -23,7 +23,6 @@ import android.widget.TextView;
 
 import com.udacity.popular_movies_2.database.AppDatabase;
 import com.udacity.popular_movies_2.database.Movie;
-import com.udacity.popular_movies_2.data.MovieAdapter;
 import com.udacity.popular_movies_2.utils.JsonUtils;
 import com.udacity.popular_movies_2.utils.NetworkUtils;
 
@@ -193,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements
                 bundleForLoader.putString("path", POPULAR);
                 getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, MainActivity.this);
                 mMovieAdapter.setMovieData(mMovies);
+                return true;
+            case R.id.action_sort_favorites:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

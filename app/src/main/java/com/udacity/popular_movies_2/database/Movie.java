@@ -64,6 +64,7 @@ public class Movie implements Parcelable {
     }
 
     private Movie(Parcel in) {
+        id = in.readInt();
         title = in.readString();
         releaseDate = new Date(in.readLong());
         moviePoster = in.readString();
@@ -78,6 +79,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(title);
         dest.writeLong(releaseDate.getTime());
         dest.writeString(moviePoster);
