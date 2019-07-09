@@ -10,7 +10,7 @@ import androidx.room.TypeConverters;
 
 @Database(entities = {Movie.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
-public abstract class AppDatabase extends RoomDatabase {
+public abstract class  AppDatabase extends RoomDatabase {
 
     private static final String TAG = AppDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();

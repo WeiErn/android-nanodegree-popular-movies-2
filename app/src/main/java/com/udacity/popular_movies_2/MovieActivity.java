@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.popular_movies_2.database.AppDatabase;
@@ -33,6 +34,8 @@ public class MovieActivity extends AppCompatActivity {
     private int mMovieId = DEFAULT_MOVIE_ID;
 
     private Movie mMovie;
+
+    private boolean mExistsInDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +71,20 @@ public class MovieActivity extends AppCompatActivity {
         });
 
         mMovieId = movie.getId();
-        if (existInDb(mMovieId)) {
-            mBinding.buttonMarkAsFavorite.setBackgroundResource(R.color.colorFavoriteButtonMarked);
-        }
-    }
 
-    private boolean existInDb(final int movieId) {
-        LiveData<Movie> movie = mDb.movieDao().loadMovieById(movieId);
-        if (movie != null) { return true; }
-        return false;
+        final LiveData<Movie> movieFromDb = mDb.movieDao().loadMovieById(mMovieId);
+        movieFromDb.observe(this, new Observer<Movie>() {
+            @Override
+            public void onChanged(Movie movie) {
+                if (movie != null) {
+                    mExistsInDb = true;
+                    mBinding.buttonMarkAsFavorite.setBackgroundResource(R.color.colorFavoriteButtonMarked);
+                } else {
+                    mExistsInDb = false;
+                    mBinding.buttonMarkAsFavorite.setBackgroundResource(android.R.drawable.btn_default);
+                }
+            }
+        });
     }
 
     @Override
@@ -91,7 +99,11 @@ public class MovieActivity extends AppCompatActivity {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mDb.movieDao().insertMovie(mMovie);
+                if (mExistsInDb) {
+                    mDb.movieDao().deleteMovie(mMovie);
+                } else {
+                    mDb.movieDao().insertMovie(mMovie);
+                }
             }
         });
     }
