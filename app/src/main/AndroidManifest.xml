@@ -20,10 +20,10 @@
         </activity>
         <activity
             android:name=".MovieActivity"
-            android:parentActivityName=".MovieActivity">
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MovieActivity" />
+                android:value=".MainActivity" />
         </activity>
     </application>
 

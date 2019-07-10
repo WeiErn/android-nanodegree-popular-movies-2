@@ -3,6 +3,8 @@ package com.udacity.popular_movies_2;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar mLoadingIndicator;
     private static final int MOVIE_LOADER_ID = 0;
     private List<Movie> mMovies;
+    private List<Movie> mFavoriteMovies;
 
     private AppDatabase mDb;
 
@@ -70,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements
         Bundle bundleForLoader = new Bundle();
         bundleForLoader.putString("path", POPULAR);
 
+        mDb = AppDatabase.getInstance(getApplicationContext());
+        setupFavoriteMovies();
+
         if (!isOnline()) {
             showNoInternetConnectionMessage();
         } else {
@@ -77,11 +83,20 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    private void setupFavoriteMovies() {
+        final LiveData<List<Movie>> favoriteMovies = mDb.movieDao().loadAllMovies();
+        favoriteMovies.observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(List<Movie> movies) {
+                mFavoriteMovies = movies;
+            }
+        });
+    }
+
     @SuppressLint("StaticFieldLeak")
     @NonNull
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, @Nullable final Bundle bundle) {
-        final String path = bundle.getString("path");
 
         return new AsyncTaskLoader<List<Movie>>(this) {
             List<Movie> mMoviesData = null;
@@ -99,19 +114,24 @@ public class MainActivity extends AppCompatActivity implements
             @Nullable
             @Override
             public List<Movie> loadInBackground() {
-                URL moviesRequestUrl = NetworkUtils.buildUrl(path);
+                if (bundle.containsKey("path")) {
+                    String path = bundle.getString("path");
+                    URL moviesRequestUrl = NetworkUtils.buildUrl(path);
 
-                try {
-                    String jsonMoviesResponse = NetworkUtils
-                            .getResponseFromHttpUrl(moviesRequestUrl);
+                    try {
+                        String jsonMoviesResponse = NetworkUtils
+                                .getResponseFromHttpUrl(moviesRequestUrl);
 
-                    List<Movie> listMoviesData = JsonUtils
-                            .getMoviesFromJson(jsonMoviesResponse);
+                        List<Movie> listMoviesData = JsonUtils
+                                .getMoviesFromJson(jsonMoviesResponse);
 
-                    return listMoviesData;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
+                        return listMoviesData;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                } else {
+                    return mFavoriteMovies;
                 }
             }
 
@@ -194,6 +214,8 @@ public class MainActivity extends AppCompatActivity implements
                 mMovieAdapter.setMovieData(mMovies);
                 return true;
             case R.id.action_sort_favorites:
+                getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, this);
+                mMovieAdapter.setMovieData(mFavoriteMovies);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
