@@ -52,6 +52,7 @@ public class MovieActivity extends AppCompatActivity implements
     final static String API_PARAM = "api_key";
     private static final String API_KEY = Constants.API_KEY;
 
+    private List<Trailer> mTrailers;
     private RecyclerView mTrailerRecyclerView;
     private TrailerAdapter mTrailerAdapter;
 
@@ -107,26 +108,26 @@ public class MovieActivity extends AppCompatActivity implements
                 @Override
                 public void onLoadFinished(@NonNull Loader<List<Trailer>> loader, List<Trailer> trailers) {
 //        mLoadingIndicator.setVisibility(View.INVISIBLE);
-//                    mTrailerAdapter.setTrailerData(trailers);
-//                    getSupportLoaderManager().destroyLoader(TRAILER_LOADER_ID);
-                    for (Trailer trailer : trailers) {
-                        TrailerFragment trailerFragment = new TrailerFragment();
-                        Bundle trailerBundle = new Bundle();
-                        trailerBundle.putString("trailerTitle", trailer.getName());
-                        trailerBundle.putString("trailerUrl", "");
-                        trailerFragment.setArguments(trailerBundle);
-
-                        FragmentManager fragmentManager = getSupportFragmentManager();
-
-                        fragmentManager.beginTransaction()
-                                .add(R.id.movie_trailers, trailerFragment)
-                                .commit();
-                    }
+                    mTrailers = trailers;
+                    mTrailerAdapter.setTrailerData(trailers);
+                    getSupportLoaderManager().destroyLoader(TRAILER_LOADER_ID);
+//                    for (Trailer trailer : trailers) {
+//                        TrailerFragment trailerFragment = new TrailerFragment();
+//                        Bundle trailerBundle = new Bundle();
+//                        trailerBundle.putString("trailerTitle", trailer.getName());
+//                        trailerBundle.putString("trailerUrl", "");
+//                        trailerFragment.setArguments(trailerBundle);
+//
+//                        FragmentManager fragmentManager = getSupportFragmentManager();
+//
+//                        fragmentManager.beginTransaction()
+//                                .add(R.id.movie_trailers, trailerFragment)
+//                                .commit();
+//                    }
                 }
 
                 @Override
                 public void onLoaderReset(@NonNull Loader<List<Trailer>> loader) {
-
                 }
             };
 
@@ -209,10 +210,5 @@ public class MovieActivity extends AppCompatActivity implements
                 }
             }
         });
-    }
-
-    @Override
-    public void onClick(Trailer trailer) {
-
     }
 }

@@ -27,7 +27,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 //    private Context mContext;
 
     public interface TrailerAdapterOnClickHandler {
-        void onClick(Trailer trailer);
     }
 
     public TrailerAdapter(TrailerAdapterOnClickHandler clickHandler) {
@@ -60,6 +59,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
     @Override
     public void onBindViewHolder(final TrailerAdapter.TrailerAdapterViewHolder trailerAdapterViewHolder, int position) {
         final Trailer trailerSelected = mTrailerData.get(position);
+        trailerAdapterViewHolder.mTrailerTitle.setText(trailerSelected.getName());
         trailerAdapterViewHolder.mTrailerPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
