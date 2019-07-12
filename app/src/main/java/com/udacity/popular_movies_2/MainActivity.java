@@ -23,12 +23,15 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.udacity.popular_movies_2.adapters.MovieAdapter;
 import com.udacity.popular_movies_2.database.AppDatabase;
 import com.udacity.popular_movies_2.database.Movie;
+import com.udacity.popular_movies_2.utils.Constants;
 import com.udacity.popular_movies_2.utils.JsonUtils;
 import com.udacity.popular_movies_2.utils.NetworkUtils;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
@@ -39,6 +42,11 @@ public class MainActivity extends AppCompatActivity implements
     private static final String POPULAR = "popular";
     private static final String TOP_RATED = "top_rated";
 
+    private static final String THEMOVIEDB_URL = "https://api.themoviedb.org/3/movie/";
+    final static String API_PARAM = "api_key";
+
+    private static final String API_KEY = Constants.API_KEY;
+
     private RecyclerView mRecyclerView;
     private MovieAdapter mMovieAdapter;
     private TextView mErrorMessageDisplay;
@@ -47,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int MOVIE_LOADER_ID = 0;
     private List<Movie> mMovies;
     private List<Movie> mFavoriteMovies;
+    private boolean mFavoritesChosen;
 
     private AppDatabase mDb;
 
@@ -89,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onChanged(List<Movie> movies) {
                 mFavoriteMovies = movies;
+                if (mFavoritesChosen) mMovieAdapter.setMovieData(mFavoriteMovies);
             }
         });
     }
@@ -115,8 +125,12 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public List<Movie> loadInBackground() {
                 if (bundle.containsKey("path")) {
-                    String path = bundle.getString("path");
-                    URL moviesRequestUrl = NetworkUtils.buildUrl(path);
+                    final String path = bundle.getString("path");
+
+                    HashMap<String, String> apiKeyValuePair = new HashMap<>();
+                    apiKeyValuePair.put(API_PARAM, API_KEY);
+
+                    URL moviesRequestUrl = NetworkUtils.buildUrl(THEMOVIEDB_URL + path, apiKeyValuePair);
 
                     try {
                         String jsonMoviesResponse = NetworkUtils
@@ -204,16 +218,19 @@ public class MainActivity extends AppCompatActivity implements
 
         switch (item.getItemId()) {
             case R.id.action_sort_rated:
+                mFavoritesChosen = false;
                 bundleForLoader.putString("path", TOP_RATED);
                 getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, MainActivity.this);
                 mMovieAdapter.setMovieData(mMovies);
                 return true;
             case R.id.action_sort_popular:
+                mFavoritesChosen = false;
                 bundleForLoader.putString("path", POPULAR);
                 getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, MainActivity.this);
                 mMovieAdapter.setMovieData(mMovies);
                 return true;
             case R.id.action_sort_favorites:
+                mFavoritesChosen = true;
                 getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, this);
                 mMovieAdapter.setMovieData(mFavoriteMovies);
                 return true;

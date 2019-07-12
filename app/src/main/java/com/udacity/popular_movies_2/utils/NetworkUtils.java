@@ -8,20 +8,23 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
-    private static final String THEMOVIEDB_URL = "https://api.themoviedb.org/3/movie/";
-    private static final String API_KEY = Constants.API_KEY;
 
-    final static String API_PARAM = "api_key";
+    public static URL buildUrl(String urlString, HashMap<String, String>... keyValuePairs) {
+        Uri.Builder UriBuilder = Uri.parse(urlString).buildUpon();
 
-    public static URL buildUrl(String path) {
-        Uri builtUri = Uri.parse(THEMOVIEDB_URL + path).buildUpon()
-                .appendQueryParameter(API_PARAM, API_KEY)
-                .build();
+        for (HashMap keyValuePair : keyValuePairs) {
+            Map.Entry<String, String> entry = (Map.Entry<String, String>) keyValuePair.entrySet().iterator().next();
+            UriBuilder.appendQueryParameter(entry.getKey(), entry.getValue());
+        }
+
+        Uri builtUri = UriBuilder.build();
 
         URL url = null;
         try {

@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface MovieDao {
 
-    @Query("SELECT * FROM movie")
+    @Query("SELECT * FROM movie ORDER BY id")
     LiveData<List<Movie>> loadAllMovies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

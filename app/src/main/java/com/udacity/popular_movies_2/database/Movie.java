@@ -8,15 +8,10 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity(tableName = "movie")
 public class Movie implements Parcelable {
-
-    @Ignore
-    private static final String baseUrl = "http://image.tmdb.org/t/p/w500";
 
     @PrimaryKey
     private int id;
@@ -58,7 +53,7 @@ public class Movie implements Parcelable {
         this.id = id;
         this.title = title;
         this.releaseDate = releaseDate;
-        this.moviePoster = baseUrl + moviePoster;
+        this.moviePoster = moviePoster;
         this.voteAverage = voteAverage;
         this.plotSynopsis = plotSynopsis;
     }

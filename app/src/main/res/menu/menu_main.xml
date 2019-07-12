@@ -5,15 +5,15 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_sort_popular"
-        android:title="@string/action_sort_popular"
+        android:name="@string/action_sort_popular"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_sort_rated"
-        android:title="@string/action_sort_rated"
+        android:name="@string/action_sort_rated"
         android:orderInCategory="1"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_sort_favorites"
-        android:title="@string/action_sort_favorites"
+        android:name="@string/action_sort_favorites"
         app:showAsAction="never" />
 </menu>
