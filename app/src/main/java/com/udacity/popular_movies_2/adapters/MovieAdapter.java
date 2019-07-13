@@ -1,6 +1,8 @@
 package com.udacity.popular_movies_2.adapters;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +61,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(@NonNull MovieAdapter.MovieAdapterViewHolder movieAdapterViewHolder, int position) {
         Movie movieSelected = mMovieData.get(position);
-        Picasso.get().load(movieSelected.getMoviePoster()).into(movieAdapterViewHolder.mMoviePosterImageView);
+//        if (isOnline()) {
+            Picasso.get().load(movieSelected.getMoviePoster()).into(movieAdapterViewHolder.mMoviePosterImageView);
+//        } else {
+//            Picasso.get().load(R.drawable.tmdb).into(movieAdapterViewHolder.mMoviePosterImageView);
+//        }
     }
 
     @Override
@@ -72,4 +78,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         mMovieData = movieData;
         notifyDataSetChanged();
     }
+
+//    public boolean isOnline() {
+//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+//        return netInfo != null && netInfo.isConnectedOrConnecting();
+//    }
 }

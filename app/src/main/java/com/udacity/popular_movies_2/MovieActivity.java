@@ -14,6 +14,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager.LoaderCallbacks;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
@@ -55,7 +56,6 @@ public class MovieActivity extends AppCompatActivity implements
 
     private static final int TRAILER_LOADER_ID = 1;
     private static final int REVIEW_LOADER_ID = 2;
-    final static String API_PARAM = "api_key";
     private static final String API_KEY = Constants.API_KEY;
 
     private List<Trailer> mTrailers;
@@ -234,7 +234,7 @@ public class MovieActivity extends AppCompatActivity implements
         if (isOnline()) {
             Picasso.get().load(mMovie.getMoviePoster()).into(mBinding.movieDetailPoster);
         } else {
-//            Picasso.load(R.drawable.image_placeholder).into(mBinding.movieDetailPoster);
+            Picasso.get().load(R.drawable.tmdb).into(mBinding.movieDetailPoster);
         }
         getSupportActionBar().setTitle(mMovie.getTitle());
         mBinding.movieDetailReleaseDate.setText(outputDateFormat.format(mMovie.getReleaseDate()));
@@ -250,10 +250,13 @@ public class MovieActivity extends AppCompatActivity implements
 
         mMovieId = mMovie.getId();
 
-        final LiveData<Movie> movieFromDb = mDb.movieDao().loadMovieById(mMovieId);
-        movieFromDb.observe(this, new Observer<Movie>() {
+        AddMovieViewModelFactory factory = new AddMovieViewModelFactory(mDb, mMovieId);
+        final AddMovieViewModel viewModel =
+                ViewModelProviders.of(this, factory).get(AddMovieViewModel.class);
+        viewModel.getMovie().observe(this, new Observer<Movie>() {
             @Override
             public void onChanged(Movie movie) {
+                viewModel.getMovie().removeObserver(this);
                 if (movie != null) {
                     mExistsInDb = true;
                     mBinding.buttonMarkAsFavorite.setBackgroundResource(R.color.colorFavoriteButtonMarked);

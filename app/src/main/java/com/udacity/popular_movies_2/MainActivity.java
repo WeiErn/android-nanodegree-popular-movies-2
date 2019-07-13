@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements
         mDb = AppDatabase.getInstance(getApplicationContext());
         setupFavoriteMovies();
 
-        if (!isOnline()) {
+        if (!isOnline() && !mFavoritesChosen) {
             showNoInternetConnectionMessage();
         } else {
             getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callback);
