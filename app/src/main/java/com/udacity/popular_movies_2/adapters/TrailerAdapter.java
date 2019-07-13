@@ -37,7 +37,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
             super(view);
             mTrailerTitle = view.findViewById(R.id.trailer_title);
             mTrailerPlayButton = view.findViewById(R.id.btn_play_trailer);
-//            mTrailerPlayButton.setOnClickListener(this);
         }
     }
 

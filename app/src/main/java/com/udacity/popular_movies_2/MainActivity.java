@@ -39,12 +39,6 @@ public class MainActivity extends AppCompatActivity implements
         LoaderCallbacks<List<Movie>> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String POPULAR = "popular";
-    private static final String TOP_RATED = "top_rated";
-
-    private static final String THEMOVIEDB_URL = "https://api.themoviedb.org/3/movie/";
-    final static String API_PARAM = "api_key";
-
     private static final String API_KEY = Constants.API_KEY;
 
     private RecyclerView mRecyclerView;
@@ -80,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements
         int loaderId = MOVIE_LOADER_ID;
         LoaderCallbacks<List<Movie>> callback = MainActivity.this;
         Bundle bundleForLoader = new Bundle();
-        bundleForLoader.putString("path", POPULAR);
+        bundleForLoader.putString(getResources().getString(R.string.bundle_key_path), getResources().getString(R.string.path_popular));
 
         mDb = AppDatabase.getInstance(getApplicationContext());
         setupFavoriteMovies();
@@ -124,13 +118,13 @@ public class MainActivity extends AppCompatActivity implements
             @Nullable
             @Override
             public List<Movie> loadInBackground() {
-                if (bundle.containsKey("path")) {
-                    final String path = bundle.getString("path");
+                if (bundle.containsKey(getResources().getString(R.string.bundle_key_path))) {
+                    final String path = bundle.getString(getResources().getString(R.string.bundle_key_path));
 
                     HashMap<String, String> apiKeyValuePair = new HashMap<>();
-                    apiKeyValuePair.put(API_PARAM, API_KEY);
+                    apiKeyValuePair.put(getResources().getString(R.string.api_param), API_KEY);
 
-                    URL moviesRequestUrl = NetworkUtils.buildUrl(THEMOVIEDB_URL + path, apiKeyValuePair);
+                    URL moviesRequestUrl = NetworkUtils.buildUrl(getResources().getString(R.string.url_themoviedb) + path, apiKeyValuePair);
 
                     try {
                         String jsonMoviesResponse = NetworkUtils
@@ -184,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements
         Context context = this;
         Class destinationClass = MovieActivity.class;
         Intent intentToStartMovieActivity = new Intent(context, destinationClass);
-        intentToStartMovieActivity.putExtra("movie", movie);
+        intentToStartMovieActivity.putExtra(getResources().getString(R.string.intent_extra_movie), movie);
         startActivity(intentToStartMovieActivity);
     }
 
@@ -219,13 +213,13 @@ public class MainActivity extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.action_sort_rated:
                 mFavoritesChosen = false;
-                bundleForLoader.putString("path", TOP_RATED);
+                bundleForLoader.putString(getResources().getString(R.string.bundle_key_path), getResources().getString(R.string.path_top_rated));
                 getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, MainActivity.this);
                 mMovieAdapter.setMovieData(mMovies);
                 return true;
             case R.id.action_sort_popular:
                 mFavoritesChosen = false;
-                bundleForLoader.putString("path", POPULAR);
+                bundleForLoader.putString(getResources().getString(R.string.bundle_key_path), getResources().getString(R.string.path_popular));
                 getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, bundleForLoader, MainActivity.this);
                 mMovieAdapter.setMovieData(mMovies);
                 return true;

@@ -8,4 +8,11 @@
     <string name="mark_as_favorite">MARK AS FAVORITE</string>
     <string name="trailers">Trailers:</string>
     <string name="reviews">Reviews:</string>
+    <string name="path_popular">popular</string>
+    <string name="path_top_rated">top_rated</string>
+    <string name="url_themoviedb">https://api.themoviedb.org/3/movie/</string>
+    <string name="bundle_key_path">path</string>
+    <string name="intent_extra_movie">movie</string>
+    <string name="api_param">api_key</string>
+    <string name="full_url_prompt">Click here to read more</string>
 </resources>

@@ -1,6 +1,9 @@
 package com.udacity.popular_movies_2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 
@@ -41,7 +44,6 @@ public class MovieActivity extends AppCompatActivity implements
 
     // Extra for the task ID to be received after rotation
     public static final String INSTANCE_MOVIE_ID = "instanceMovieId";
-    private static final String THEMOVIEDB_URL = "https://api.themoviedb.org/3/movie/";
 
     private AppDatabase mDb;
 
@@ -86,10 +88,10 @@ public class MovieActivity extends AppCompatActivity implements
                         @Override
                         public List<Trailer> loadInBackground() {
                             HashMap<String, String> apiKeyValuePair = new HashMap<>();
-                            apiKeyValuePair.put(API_PARAM, API_KEY);
+                            apiKeyValuePair.put(getResources().getString(R.string.api_param), API_KEY);
 
                             URL trailersRequestUrl = NetworkUtils.buildUrl(
-                                    THEMOVIEDB_URL + mMovieId + "/videos",
+                                    getResources().getString(R.string.url_themoviedb) + mMovieId + "/videos",
                                     apiKeyValuePair);
 
                             try {
@@ -149,10 +151,10 @@ public class MovieActivity extends AppCompatActivity implements
                         @Override
                         public List<Review> loadInBackground() {
                             HashMap<String, String> apiKeyValuePair = new HashMap<>();
-                            apiKeyValuePair.put(API_PARAM, API_KEY);
+                            apiKeyValuePair.put(getResources().getString(R.string.api_param), API_KEY);
 
                             URL reviewsRequestUrl = NetworkUtils.buildUrl(
-                                    THEMOVIEDB_URL + mMovieId + "/reviews",
+                                    getResources().getString(R.string.url_themoviedb) + mMovieId + "/reviews",
                                     apiKeyValuePair);
 
                             try {
@@ -218,8 +220,8 @@ public class MovieActivity extends AppCompatActivity implements
         mDb = AppDatabase.getInstance(getApplicationContext());
 
         Intent intent = getIntent();
-        if (intent.hasExtra("movie")) {
-            mMovie = intent.getExtras().getParcelable("movie");
+        if (intent.hasExtra(getResources().getString(R.string.intent_extra_movie))) {
+            mMovie = intent.getExtras().getParcelable(getResources().getString(R.string.intent_extra_movie));
             displayMovieDetails();
         }
 
@@ -229,7 +231,11 @@ public class MovieActivity extends AppCompatActivity implements
     }
 
     private void displayMovieDetails() {
-        Picasso.get().load(mMovie.getMoviePoster()).into(mBinding.movieDetailPoster);
+        if (isOnline()) {
+            Picasso.get().load(mMovie.getMoviePoster()).into(mBinding.movieDetailPoster);
+        } else {
+//            Picasso.load(R.drawable.image_placeholder).into(mBinding.movieDetailPoster);
+        }
         getSupportActionBar().setTitle(mMovie.getTitle());
         mBinding.movieDetailReleaseDate.setText(outputDateFormat.format(mMovie.getReleaseDate()));
         mBinding.movieDetailVoteAverage.setText(mMovie.getVoteAverage() + "/10");
@@ -278,5 +284,11 @@ public class MovieActivity extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
