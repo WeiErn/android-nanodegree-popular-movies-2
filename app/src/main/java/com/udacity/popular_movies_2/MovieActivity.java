@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.popular_movies_2.adapters.ReviewAdapter;
 import com.udacity.popular_movies_2.adapters.TrailerAdapter;
 import com.udacity.popular_movies_2.database.AppDatabase;
 import com.udacity.popular_movies_2.database.Movie;
+import com.udacity.popular_movies_2.database.Review;
 import com.udacity.popular_movies_2.database.Trailer;
 import com.udacity.popular_movies_2.databinding.ActivityMovieBinding;
 import com.udacity.popular_movies_2.utils.Constants;
@@ -49,12 +51,17 @@ public class MovieActivity extends AppCompatActivity implements
     private boolean mExistsInDb;
 
     private static final int TRAILER_LOADER_ID = 1;
+    private static final int REVIEW_LOADER_ID = 2;
     final static String API_PARAM = "api_key";
     private static final String API_KEY = Constants.API_KEY;
 
     private List<Trailer> mTrailers;
+    private List<Review> mReviews;
     private RecyclerView mTrailerRecyclerView;
+    private RecyclerView mReviewRecyclerView;
     private TrailerAdapter mTrailerAdapter;
+    private ReviewAdapter mReviewAdapter;
+
 
     private LoaderCallbacks<List<Trailer>> trailerResultLoaderListener =
             new LoaderCallbacks<List<Trailer>>() {
@@ -111,19 +118,6 @@ public class MovieActivity extends AppCompatActivity implements
                     mTrailers = trailers;
                     mTrailerAdapter.setTrailerData(trailers);
                     getSupportLoaderManager().destroyLoader(TRAILER_LOADER_ID);
-//                    for (Trailer trailer : trailers) {
-//                        TrailerFragment trailerFragment = new TrailerFragment();
-//                        Bundle trailerBundle = new Bundle();
-//                        trailerBundle.putString("trailerTitle", trailer.getName());
-//                        trailerBundle.putString("trailerUrl", "");
-//                        trailerFragment.setArguments(trailerBundle);
-//
-//                        FragmentManager fragmentManager = getSupportFragmentManager();
-//
-//                        fragmentManager.beginTransaction()
-//                                .add(R.id.movie_trailers, trailerFragment)
-//                                .commit();
-//                    }
                 }
 
                 @Override
@@ -131,33 +125,106 @@ public class MovieActivity extends AppCompatActivity implements
                 }
             };
 
+
+    private LoaderCallbacks<List<Review>> reviewResultLoaderListener =
+            new LoaderCallbacks<List<Review>>() {
+                @NonNull
+                @Override
+                public Loader<List<Review>> onCreateLoader(int id, @Nullable Bundle args) {
+                    return new AsyncTaskLoader<List<Review>>(MovieActivity.this) {
+                        List<Review> mReviewsData = null;
+
+                        @Override
+                        protected void onStartLoading() {
+                            if (mReviewsData != null) {
+                                deliverResult(mReviewsData);
+                            } else {
+//                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                                forceLoad();
+                            }
+                        }
+
+                        @Nullable
+                        @Override
+                        public List<Review> loadInBackground() {
+                            HashMap<String, String> apiKeyValuePair = new HashMap<>();
+                            apiKeyValuePair.put(API_PARAM, API_KEY);
+
+                            URL reviewsRequestUrl = NetworkUtils.buildUrl(
+                                    THEMOVIEDB_URL + mMovieId + "/reviews",
+                                    apiKeyValuePair);
+
+                            try {
+                                String jsonReviewsResponse = NetworkUtils
+                                        .getResponseFromHttpUrl(reviewsRequestUrl);
+
+                                List<Review> listReviewsData = JsonUtils
+                                        .getReviewsFromJson(jsonReviewsResponse);
+
+                                return listReviewsData;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                return null;
+                            }
+                        }
+
+                        public void deliverResult(List<Review> data) {
+                            mReviewsData = data;
+                            super.deliverResult(data);
+                        }
+                    };
+                }
+
+                @Override
+                public void onLoadFinished(@NonNull Loader<List<Review>> loader, List<Review> reviews) {
+//        mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mReviews = reviews;
+                    mReviewAdapter.setReviewData(reviews);
+                    getSupportLoaderManager().destroyLoader(REVIEW_LOADER_ID);
+                }
+
+                @Override
+                public void onLoaderReset(@NonNull Loader<List<Review>> loader) {
+                }
+            };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie);
 
-//        setContentView(R.layout.trailers);
         mTrailerRecyclerView = mBinding.recyclerviewTrailers;
+        mReviewRecyclerView = mBinding.recyclerviewReviews;
+
         GridLayoutManager layoutManagerTrailers
                 = new GridLayoutManager(this, 1, RecyclerView.VERTICAL, false);
+        GridLayoutManager layoutManagerReviews
+                = new GridLayoutManager(this, 1, RecyclerView.VERTICAL, false);
+
         mTrailerRecyclerView.setLayoutManager(layoutManagerTrailers);
+        mReviewRecyclerView.setLayoutManager(layoutManagerReviews);
+
         mTrailerRecyclerView.setHasFixedSize(true);
+        mReviewRecyclerView.setHasFixedSize(true);
+
         mTrailerAdapter = new TrailerAdapter(this);
+        mReviewAdapter = new ReviewAdapter((ReviewAdapter.ReviewAdapterOnClickHandler) this);
+
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
+        mReviewRecyclerView.setAdapter(mReviewAdapter);
 
         mDb = AppDatabase.getInstance(getApplicationContext());
 
         Intent intent = getIntent();
-
-        int loaderId = TRAILER_LOADER_ID;
-        Bundle bundleForLoader = new Bundle();
-
         if (intent.hasExtra("movie")) {
             mMovie = intent.getExtras().getParcelable("movie");
             displayMovieDetails();
         }
 
-        getSupportLoaderManager().initLoader(loaderId, bundleForLoader, trailerResultLoaderListener);
+        Bundle bundleForLoader = new Bundle();
+        getSupportLoaderManager().initLoader(TRAILER_LOADER_ID, bundleForLoader, trailerResultLoaderListener);
+        getSupportLoaderManager().initLoader(REVIEW_LOADER_ID, bundleForLoader, reviewResultLoaderListener);
     }
 
     private void displayMovieDetails() {

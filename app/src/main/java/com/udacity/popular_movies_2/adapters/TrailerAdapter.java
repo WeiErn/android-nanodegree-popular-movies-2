@@ -3,7 +3,6 @@ package com.udacity.popular_movies_2.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +16,11 @@ import com.udacity.popular_movies_2.database.Trailer;
 
 import java.util.List;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder> {
 
     private static final String TAG = TrailerAdapter.class.getSimpleName();
     private List<Trailer> mTrailerData;
     private final TrailerAdapterOnClickHandler mClickHandler;
-//    private Context mContext;
 
     public interface TrailerAdapterOnClickHandler {
     }
