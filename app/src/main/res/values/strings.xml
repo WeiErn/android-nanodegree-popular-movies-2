@@ -7,4 +7,5 @@
     <string name="no_internet_connection_message">No internet connection.</string>
     <string name="mark_as_favorite">MARK AS FAVORITE</string>
     <string name="trailers">Trailers:</string>
+    <string name="reviews">Reviews:</string>
 </resources>

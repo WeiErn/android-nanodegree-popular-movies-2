@@ -1,6 +1,7 @@
 package com.udacity.popular_movies_2.utils;
 
 import com.udacity.popular_movies_2.database.Movie;
+import com.udacity.popular_movies_2.database.Review;
 import com.udacity.popular_movies_2.database.Trailer;
 
 import org.json.JSONArray;
@@ -72,6 +73,12 @@ public final class JsonUtils {
         if (reviewsJsonArr.length() > 0) {
             for (int i = 0; i < reviewsJsonArr.length(); i++) {
                 JSONObject reviewJsonObj = reviewsJsonArr.getJSONObject(i);
+                Review review = new Review(
+                        reviewJsonObj.getString("author"),
+                        reviewJsonObj.getString("content"),
+                        reviewJsonObj.getString("url")
+                );
+                reviewList.add(review);
             }
         }
         return reviewList;

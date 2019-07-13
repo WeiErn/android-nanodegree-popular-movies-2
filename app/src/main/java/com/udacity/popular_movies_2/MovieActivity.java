@@ -35,7 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MovieActivity extends AppCompatActivity implements
-        TrailerAdapter.TrailerAdapterOnClickHandler {
+        TrailerAdapter.TrailerAdapterOnClickHandler,
+        ReviewAdapter.ReviewAdapterOnClickHandler {
     ActivityMovieBinding mBinding;
 
     // Extra for the task ID to be received after rotation
@@ -209,7 +210,7 @@ public class MovieActivity extends AppCompatActivity implements
         mReviewRecyclerView.setHasFixedSize(true);
 
         mTrailerAdapter = new TrailerAdapter(this);
-        mReviewAdapter = new ReviewAdapter((ReviewAdapter.ReviewAdapterOnClickHandler) this);
+        mReviewAdapter = new ReviewAdapter(this);
 
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
         mReviewRecyclerView.setAdapter(mReviewAdapter);
