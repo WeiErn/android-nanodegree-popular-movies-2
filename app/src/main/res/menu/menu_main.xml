@@ -6,14 +6,17 @@
     <item
         android:id="@+id/action_sort_popular"
         android:name="@string/action_sort_popular"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:title="Most Popular" />
     <item
         android:id="@+id/action_sort_rated"
         android:name="@string/action_sort_rated"
         android:orderInCategory="1"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:title="Highest Rated"/>
     <item
         android:id="@+id/action_sort_favorites"
         android:name="@string/action_sort_favorites"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:title="Favorites"/>
 </menu>

@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mMovieAdapter = new MovieAdapter(this);
+        mMovieAdapter = new MovieAdapter(this, this);
         mRecyclerView.setAdapter(mMovieAdapter);
         mLoadingIndicator = findViewById(R.id.pb_loading_indicator);
 
@@ -79,8 +79,9 @@ public class MainActivity extends AppCompatActivity implements
         mDb = AppDatabase.getInstance(getApplicationContext());
         setupFavoriteMovies();
 
-        if (!isOnline() && !mFavoritesChosen) {
-            showNoInternetConnectionMessage();
+        if (!isOnline()) {
+            if (!mFavoritesChosen)
+                showNoInternetConnectionMessage();
         } else {
             getSupportLoaderManager().initLoader(loaderId, bundleForLoader, callback);
         }
@@ -156,7 +157,11 @@ public class MainActivity extends AppCompatActivity implements
         mMovies = movies;
         mMovieAdapter.setMovieData(movies);
         if (!isOnline()) {
-            showNoInternetConnectionMessage();
+            if (!mFavoritesChosen) {
+                showNoInternetConnectionMessage();
+            } else {
+                showMoviesDataView();
+            }
         } else if (null == movies) {
             showErrorMessage();
         } else {

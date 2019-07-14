@@ -22,13 +22,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     private static final String TAG = MovieAdapter.class.getSimpleName();
     private List<Movie> mMovieData;
     private final MovieAdapterOnClickHandler mClickHandler;
+    private Context mContext;
 
     public interface MovieAdapterOnClickHandler {
         void onClick(Movie movie);
     }
 
-    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler, Context context) {
         mClickHandler = clickHandler;
+        mContext = context;
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -61,11 +63,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     @Override
     public void onBindViewHolder(@NonNull MovieAdapter.MovieAdapterViewHolder movieAdapterViewHolder, int position) {
         Movie movieSelected = mMovieData.get(position);
-//        if (isOnline()) {
+        if (isOnline()) {
             Picasso.get().load(movieSelected.getMoviePoster()).into(movieAdapterViewHolder.mMoviePosterImageView);
-//        } else {
-//            Picasso.get().load(R.drawable.tmdb).into(movieAdapterViewHolder.mMoviePosterImageView);
-//        }
+        } else {
+            Picasso.get().load(R.drawable.tmdb).into(movieAdapterViewHolder.mMoviePosterImageView);
+        }
     }
 
     @Override
@@ -79,9 +81,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         notifyDataSetChanged();
     }
 
-//    public boolean isOnline() {
-//        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-//        return netInfo != null && netInfo.isConnectedOrConnecting();
-//    }
+    public boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 }

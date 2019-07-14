@@ -256,7 +256,7 @@ public class MovieActivity extends AppCompatActivity implements
         viewModel.getMovie().observe(this, new Observer<Movie>() {
             @Override
             public void onChanged(Movie movie) {
-                viewModel.getMovie().removeObserver(this);
+//                viewModel.getMovie().removeObserver(this);
                 if (movie != null) {
                     mExistsInDb = true;
                     mBinding.buttonMarkAsFavorite.setBackgroundResource(R.color.colorFavoriteButtonMarked);
